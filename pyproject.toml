@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "data-engineer-zoomcamp"
+version = "0.1.0"
+description = ""
+authors = ["nattawat"]
+readme = "README.md"
+packages = [{include = "data_engineer_zoomcamp"}]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+pandas = "1.5.2"
+protobuf = "4.21.11" 
+pyarrow = "10.0.1" 
+pandas-gbq = "0.18.1" 
+psycopg2-binary = "2.9.5" 
+sqlalchemy = "1.4.46"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
