@@ -1,6 +1,9 @@
 # Local .terraform directories
 # **/.terraform/*
 
+#python
+.python-version
+
 # .tfstate files
 *.tfstate
 *.tfstate.*
@@ -33,7 +36,7 @@ override.tf.json
 .terraformrc
 terraform.rc
 .terraform/
-.terraform.lock.hcl
+**/.terraform.lock.hcl/*
 
 # file
 *.csv
