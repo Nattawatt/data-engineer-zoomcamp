@@ -16,7 +16,7 @@ psycopg2-binary = "2.9.5"
 sqlalchemy = "1.4.46"
 prefect = "2.7.7"
 prefect-sqlalchemy = "0.2.2"
-prefect-gcp = {version = "0.2.3", extras = ["cloud-storage"]}
+prefect-gcp = {version = "0.2.6", extras = ["cloud-storage"]}
 
 [build-system]
 requires = ["poetry-core"]
