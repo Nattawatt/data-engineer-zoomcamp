@@ -33,16 +33,24 @@ def write_bq(df: pd.DataFrame, color: str) -> None:
         if_exists= "append",
     )
 
-@flow()
-def etl_gcs_to_bq():
-    """Main ETL flow to load data into Big Query"""
-    color = "yellow"
-    year = 2021
-    month = 1
 
+@flow()
+def etl_gcs_to_bq(year : int, month : int, color : str):
+    """Main ETL flow to load data into Big Query"""
     path = extract_from_gcs(color, year, month)
     df = transform(path)
     write_bq(df,color)
 
+@flow()
+def etl_parent_gcs_to_bq_flow(
+    months: list[int] = [1, 2], year: int = 2021, color: str = "yellow"
+):
+    """Parent flow for parameterized flow"""
+    for month in months:
+        etl_gcs_to_bq(year, month, color)
+
 if __name__ == "__main__":
-    etl_gcs_to_bq()
+    months = [1, 2]
+    year = 2021
+    color = "yellow"
+    etl_parent_gcs_to_bq_flow(months,year,color)
