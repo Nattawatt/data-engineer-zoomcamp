@@ -75,8 +75,8 @@ Where is the data stored in the External Table you created?
 
 # Question 7:
 It is best practice in Big Query to always cluster your data:
-- True
-- `False`
+- `True`
+- False
 
 
 # (Not required) Question 8:
