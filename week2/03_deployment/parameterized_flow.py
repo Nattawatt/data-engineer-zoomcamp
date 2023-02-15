@@ -21,6 +21,14 @@ def clean(df: pd.DataFrame, color: str) -> pd.DataFrame:
     if color == "green":
         df.tpep_pickup_datetime = pd.to_datetime(df.lpep_pickup_datetime)
         df.tpep_pickup_datetime = pd.to_datetime(df.lpep_dropoff_datetime)
+    elif color == "fhv":
+        df.dispatching_base_num = df.dispatching_base_num.astype(str)
+        df.pickup_datetime = pd.to_datetime(df.pickup_datetime)
+        df.dropOff_datetime = pd.to_datetime(df.dropOff_datetime)
+        df.PUlocationID = df.PUlocationID.astype(float)
+        df.DOlocationID = df.DOlocationID.astype(float)
+        df.SR_Flag = df.SR_Flag.astype('Int64')
+        df.Affiliated_base_number = df.Affiliated_base_number.astype(str)
     elif color == "yellow":
         df.tpep_pickup_datetime = pd.to_datetime(df.tpep_pickup_datetime)
         df.tpep_dropoff_datetime = pd.to_datetime(df.tpep_dropoff_datetime)

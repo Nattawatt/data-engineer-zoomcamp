@@ -24,7 +24,7 @@ def transform(path: Path)-> pd.DataFrame:
 @task()
 def write_bq(df: pd.DataFrame, color: str) -> None:
     """write DataFrame to BigQuery"""
-    gcp_credentials_block = GcpCredentials.load("gcp-zoomcamp")
+    gcp_credentials_block = GcpCredentials.load("gcp-credentials-for-gcs")
     df.to_gbq(
         destination_table=f"dezoomcamp.{color}_rides",
         project_id="de-zoomcamp-376514",

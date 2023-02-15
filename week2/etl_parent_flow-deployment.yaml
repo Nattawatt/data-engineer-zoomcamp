@@ -1,9 +1,9 @@
 ###
 ### A complete description of a Prefect Deployment for flow 'etl-parent-flow'
 ###
-name: Parameterized ETL
-description: Parent flow for parameterized flow
-version: a40d69481a7c0990c705d82684f11ee6
+name: etl_web_to_gcs
+description: null
+version: c451f566dff56bad09958c28492aa6d9
 # The work queue that will handle this deployment's runs
 work_queue_name: default
 tags: []
@@ -24,8 +24,8 @@ infrastructure:
   command: null
   stream_output: true
   working_dir: null
-  _block_document_id: 92e15873-444e-4631-938b-e3717d30c544
-  _block_document_name: anonymous-25020fb4-82fb-42f8-8a6e-a5716cec8f78
+  _block_document_id: b62cb1cc-1f21-45af-a0e7-d56d37372a21
+  _block_document_name: anonymous-a31ab37f-73c3-4ae7-af84-a2ab120a15a6
   _is_anonymous: true
   block_type_slug: process
   _block_type_slug: process
@@ -38,21 +38,20 @@ parameter_openapi_schema:
   properties:
     months:
       title: months
-      default:
-      - 1
-      - 2
       position: 0
       type: array
       items:
         type: integer
     year:
       title: year
-      default: 2021
       position: 1
       type: integer
     color:
       title: color
-      default: yellow
       position: 2
-  required: null
+      type: string
+  required:
+  - months
+  - year
+  - color
   definitions: null
