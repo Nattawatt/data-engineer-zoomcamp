@@ -3,7 +3,26 @@ import pandas as pd
 from prefect import flow, task
 from prefect_gcp.cloud_storage import GcsBucket
 
-
+SCHEMA = {
+    "VendorID" : str,
+    "store_and_fwd_flag" : str,
+    "RatecodeID" : 'Int64',
+    "PULocationID" : 'Int64',
+    "DOLocationID" : 'Int64',
+    "passenger_count" : "Int64",
+    "trip_distance" : float,
+    "fare_amount" : float,
+    "extra" : float,
+    "mta_tax" : float,
+    "tip_amount" : float,
+    "tolls_amount" : float,
+    "ehail_fee" : float,
+    "improvement_surcharge" : float,
+    "total_amount" : float,
+    "payment_type" : "Int64",
+    "trip_type" : "Int64",
+    "congestion_surcharge" : float
+}
 
 @task(retries=3)
 def fetch(dataset_url: str) -> pd.DataFrame:
@@ -19,8 +38,10 @@ def fetch(dataset_url: str) -> pd.DataFrame:
 def clean(df: pd.DataFrame, color: str) -> pd.DataFrame:
     """Fix dtype issues"""
     if color == "green":
-        df.tpep_pickup_datetime = pd.to_datetime(df.lpep_pickup_datetime)
-        df.tpep_pickup_datetime = pd.to_datetime(df.lpep_dropoff_datetime)
+        df.lpep_pickup_datetime = pd.to_datetime(df.lpep_pickup_datetime)
+        df.lpep_dropoff_datetime = pd.to_datetime(df.lpep_dropoff_datetime)
+        df = df.astype(SCHEMA)
+        df.rename(columns={"lpep_pickup_datetime": "tpep_pickup_datetime", "lpep_dropoff_datetime": "tpep_dropoff_datetime"}, inplace= True)
     elif color == "fhv":
         df.dispatching_base_num = df.dispatching_base_num.astype(str)
         df.pickup_datetime = pd.to_datetime(df.pickup_datetime)
