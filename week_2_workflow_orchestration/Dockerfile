@@ -13,3 +13,4 @@ RUN mkdir -p /opt/prefect/data
 RUN mkdir -p /opt/prefect/deployment
 
 COPY 03_deployment/parameterized_flow.py /opt/prefect/03_deployment/
+COPY 03_deployment/config_schema_web_to_gcs.py /opt/prefect/03_deployment/

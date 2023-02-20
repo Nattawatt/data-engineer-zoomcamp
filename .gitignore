@@ -46,5 +46,13 @@ terraform.rc
 # key
 *.json
 
+# python
+/__pycache__
+
 # 
 ny_taxi_postgres_data/
+
+# week4
+logs/
+target/
+dbt_packages/
