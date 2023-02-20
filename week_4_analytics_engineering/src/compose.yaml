@@ -1,0 +1,13 @@
+version: '3'
+services:
+  dbt-bq: #name of the service
+    build:
+      context: . #which docker file to use
+      target: dbt-bigquery #which plugin to install in addition to dbt-core
+    image: dbt/bigquery
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=/.google/credentials/google_credentials.json
+    volumes:
+      - .:/usr/app #persisting dbt data
+      - ~/.dbt:/root/.dbt #location of profiles.yml
+      - ~/.google/credentials/google_credentials.json:/.google/credentials/google_credentials.json
