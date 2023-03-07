@@ -56,3 +56,10 @@ ny_taxi_postgres_data/
 logs/
 target/
 dbt_packages/
+
+# ipython
+.ipynb_checkpoints
+
+# data for week5
+data
+fhvhv
