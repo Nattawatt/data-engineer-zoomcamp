@@ -1,0 +1,10 @@
+services:
+  pyspark-zoomcamp:
+    image: jupyter/pyspark-notebook
+    ports:
+      # jupyter notebook
+      - 8888:8888
+      # spark
+      - 4040:4040
+    volumes:
+      - ./src:/home/jovyan/src
