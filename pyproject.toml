@@ -9,7 +9,6 @@ packages = [{include = "data_engineer_zoomcamp"}]
 [tool.poetry.dependencies]
 python = "3.9.13"
 pandas = "1.5.2"
-prefect = "2.7.7"
 prefect-sqlalchemy = "0.2.2"
 prefect-gcp = { version = "0.2.4", extras = ["cloud_storage"] }
 protobuf = "4.21.11"
@@ -26,6 +25,12 @@ prefect-github = "0.1.5"
 prefect-great-expectations = "0.1.0"
 prefect-shell = "0.1.4"
 pyspark = "^3.3.2"
+kafka-python = "1.4.6"
+confluent-kafka = "^2.0.2"
+requests = "^2.28.2"
+avro = "^1.11.1"
+fastavro = "^1.7.3"
+prefect = "2.7.7"
 
 [build-system]
 requires = ["poetry-core"]
