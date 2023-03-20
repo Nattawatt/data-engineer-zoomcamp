@@ -10,10 +10,6 @@ At `../../docker/kafka`
 ```
 docker-compose up -d
 ```
-
-```
-pip install -r requirements.txt
-```
 ## Download Data
 
 [fhv_tripdata_2019-01.csv.gz](https://github.com/DataTalksClub/nyc-tlc-data/releases/tag/fhv)
@@ -23,6 +19,11 @@ pip install -r requirements.txt
 Save it to `../../resources`
 
 ## Producer
+
+```
+pip install -r requirements.txt
+```
+
 green
 
 ```
