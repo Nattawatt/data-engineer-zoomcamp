@@ -15,13 +15,6 @@ class JsonProducer(KafkaProducer):
 
     @staticmethod
     def read_records(resource_path: str):
-        # records = []
-        # with open(resource_path, 'r') as f:
-        #     reader = csv.reader(f)
-        #     header = next(reader)  # skip the header row
-        #     for row in reader:
-        #         records.append(Ride(arr=row))
-        # return records
         records, ride_keys = [], []
         i = 0
         with open(resource_path, 'r') as f:
@@ -29,7 +22,7 @@ class JsonProducer(KafkaProducer):
             header = next(reader)  # skip the header
             for row in reader:
                 # pu_location_id
-                records.append(f'{row[0]}')
+                records.append(str({row[0]}))
                 ride_keys.append(str(row[0]))
                 i += 1
                 if i == 5:

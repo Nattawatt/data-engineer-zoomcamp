@@ -46,6 +46,7 @@ The topic contains the message from event along a time.
 
 # Kafka Configuration (important)
 
+[more kafka configuration](https://kafka.apache.org/documentation/#configuration)
 ## Replication
 
 If node 1 die then `data wasn't lost` because it replicate to another node.

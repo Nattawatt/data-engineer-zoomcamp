@@ -8,7 +8,7 @@ and green_tripdata_2019-01.csv.gz
 
 At `../../docker/kafka`
 ```
-docker-compose up
+docker-compose up -d
 ```
 
 ```
