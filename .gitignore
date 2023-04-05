@@ -43,14 +43,14 @@ terraform.rc
 *.csv.gz
 *.parquet
 
-# key
-*.json
-
 # python
 /__pycache__
 
 # 
 ny_taxi_postgres_data/
+
+# week1 key
+week_1_basics_n_setup/1_TERRAFORM/terraform/*.json
 
 # week4
 logs/
@@ -61,5 +61,10 @@ dbt_packages/
 .ipynb_checkpoints
 
 # data for week5
-data
+week_5_batch_processing/src/data
+week_5_batch_processing/src/fhvhv
 fhvhv
+
+# project
+week_7_project/kafka/data/*.json
+week_7_project/kafka/__pycache__
