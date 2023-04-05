@@ -1,3 +1,13 @@
+config = {
+     'bootstrap.servers': 'localhost:9092',     
+}
+
+sr_config = {
+    'url': 'http://localhost:8081',
+}
+
+
+schema_location_police = """
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "title": "Police Report",
@@ -11,7 +21,7 @@
     },
     "uid": {
     "description": "Unique identifier for the police officer",
-    "type": "string"
+    "type": "number"
     },
     "first_name": {
     "description": "First name of the police officer",
@@ -55,7 +65,4 @@
     }
 }
 }
-    
-    
-    
-    
+"""
