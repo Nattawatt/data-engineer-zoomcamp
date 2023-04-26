@@ -9,59 +9,64 @@ At `infra/`
 ```
 docker-compose up -d
 ```
-# check docker container up all( TODO )
+
+**check docker container up all**
+```bash
+docker container ls
+```
 
 # CREATE TOPICS
 ```
-topics = police_locations
+topics = express_sensor
 partition = 6
 ```
 ## UI ( OPTION 1 )
-visit `http://localhost:9021/`
+visit http://localhost:9021/
 
 ![Alt text](images/create-kafka-topics-ui.JPG)
 
-## CLI ( OPTION 2 )( TODO )
-```
-docker exec -it ksqldb-cli ksql http://ksqldb-server:8088
-```
 # CREATE STREAMING
-
-## UI ( OPTION 1 )
-```
-```
-## CLI ( OPTION 2 )( TODO )
 ```
 docker exec -it ksqldb-cli ksql http://ksqldb-server:8088
 ```
 
-```
-CREATE STREAM police_locations_stream (
-  uid DOUBLE,
-  timestamp VARCHAR(string),
-  first_name VARCHAR(string),
-  last_name VARCHAR(string),
-  age DOUBLE,
-  age_in_police_job DOUBLE,
-  rank VARCHAR(string),
-  lat DOUBLE,
-  long DOUBLE,
-  sub_district VARCHAR(string),
-  district VARCHAR(string),
-  state VARCHAR(string)
+```sql
+CREATE STREAM express_sensor(
+  timestamp BIGINT,
+  uid_car VARCHAR,
+  road_name VARCHAR,
+  speed BIGINT
 ) WITH (
-  KAFKA_TOPIC='police_locations',
-  VALUE_FORMAT='JSON_SR'
+  KAFKA_TOPIC='express_sensor',
+  VALUE_FORMAT='JSON_SR',
+  TIMESTAMP='timestamp'
 );
 ```
 
-```
-SHOW STREAMS;
+```sql
+CREATE TABLE express_report_5_mins
+AS
+SELECT 
+ road_name, 
+ AVG(speed) AS AVG_SPEED_5_MIN
+FROM 
+express_sensor WINDOW TUMBLING (SIZE 5 MINUTE) 
+GROUP BY road_name;
 ```
 
+```sql
+SELECT
+    road_name, 
+    TIMESTAMPTOSTRING(WINDOWSTART,'yyyy-MM-dd HH:mm:ss') AS window_start,
+    TIMESTAMPTOSTRING(WINDOWEND,'yyyy-MM-dd HH:mm:ss') AS window_end,
+    AVG_SPEED_5_MIN,
+    CASE
+      WHEN AVG_SPEED_5_MIN > 100 THEN 'flow'
+      WHEN AVG_SPEED_5_MIN > 60 THEN 'normal'
+      ELSE 'jam' END AS TRAFFIC_STATUS
+FROM express_report_5_mins EMIT CHANGES;
 ```
-SELECT * FROM POLICE_LOCATIONS_STREAM EMIT CHANGES;
-```
+
 # RUN PRODUCER
 ```bash
 poetry shell

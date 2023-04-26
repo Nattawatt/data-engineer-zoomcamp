@@ -1,3 +1,5 @@
+topic = 'express_sensor_unix'
+
 config = {
      'bootstrap.servers': 'localhost:9092',     
 }
@@ -6,63 +8,31 @@ sr_config = {
     'url': 'http://localhost:8081',
 }
 
-
-schema_location_police = """
+express_schema = """
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "title": "Police Report",
-    "description": "Report of a police officer's location and activity",
+    "title": "Car Report",
+    "description": "Report of a car on a road",
     "type": "object",
     "properties": {
-    "timestamp": {
-    "description": "Time of the report in ISO 8601 format",
-    "type": "string",
-    "format": "date-time"
-    },
-    "uid": {
-    "description": "Unique identifier for the police officer",
-    "type": "number"
-    },
-    "first_name": {
-    "description": "First name of the police officer",
-    "type": "string"
-    },
-    "last_name": {
-    "description": "Last name of the police officer",
-    "type": "string"
-    },
-    "age": {
-    "description": "Age of the police officer",
-    "type": "number"
-    },
-    "age_in_police_job": {
-    "description": "Years of experience of the police officer",
-    "type": "number"
-    },
-    "rank": {
-    "description": "Rank of the police officer",
-    "type": "string"
-    },
-    "lat": {
-    "description": "Latitude in decimal degrees",
-    "type": "number"
-    },
-    "long": {
-    "description": "Longitude in decimal degrees",
-    "type": "number"
-    },
-    "sub_district": {
-    "description": "Sub-district name",
-    "type": "string"
-    },
-    "district": {
-    "description": "District name",
-    "type": "string"
-    },
-    "state": {
-    "description": "State name or abbreviation",
-    "type": "string"
+        "timestamp": {
+            "description": "Time of the report in Unix timestamp format",
+            "type": "integer",
+            "format": "int64"
+        },
+        "uid_car": {
+            "description": "Unique identifier for the car",
+            "type": "string"
+        },
+        "road_name": {
+            "description": "Name of the road the car is on",
+            "type": "string"
+        },
+        "speed": {
+            "description": "Speed of the car in km/h",
+            "type": "integer",
+            "format": "int64"
+        }
     }
-}
 }
 """
