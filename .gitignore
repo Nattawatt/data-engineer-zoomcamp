@@ -53,7 +53,7 @@ ny_taxi_postgres_data/
 week_1_basics_n_setup/1_TERRAFORM/terraform/*.json
 
 # week4
-logs/
+week_4_analytics_engineering/src/dbt/logs/*
 target/
 dbt_packages/
 
@@ -66,5 +66,7 @@ week_5_batch_processing/src/fhvhv
 fhvhv
 
 # project
-week_7_project/kafka/data/*.json
 week_7_project/kafka/__pycache__
+week_7_project/airflow/.env
+week_7_project/airflow/logs/*
+week_7_project/terraform/.terraform*
