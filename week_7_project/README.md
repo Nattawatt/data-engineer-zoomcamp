@@ -17,16 +17,16 @@ requirement
 1.google cloud account
 
 ## step1 cloud
-[CLOUD]()
+[CLOUD](https://github.com/Nattawatt/data-engineer-zoomcamp/tree/main/week_7_project/terraform/README.md)
 
 ## step2 kafka
-[KAFKA]()
+[KAFKA](https://github.com/Nattawatt/data-engineer-zoomcamp/tree/main/week_7_project/kafka/README.md)
 
 ## step3 airflow
-[AIRFLOW]()
+[AIRFLOW](https://github.com/Nattawatt/data-engineer-zoomcamp/blob/main/week_7_project/airflow/README.md)
 
 ## step4 dbt
-[DBT]()
+[DBT](https://github.com/Nattawatt/data-engineer-zoomcamp/tree/main/week_7_project/dbt/README.md)
 
 # run producer.py
 
