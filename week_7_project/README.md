@@ -30,7 +30,8 @@ requirement
 
 
 # STREAMING VIDEO
-<div style="position: relative; padding-bottom: 56.25%; height: 0;"><iframe src="https://www.loom.com/embed/49418fe8ca6c47af9f627baff0bf9e21" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe></div>
+<iframe width="560" height="315" src="https://www.loom.com/embed/49418fe8ca6c47af9f627baff0bf9e21" frameborder="0" allowfullscreen></iframe>
+
 -----
 # peer-review-criteria
 
