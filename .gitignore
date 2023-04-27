@@ -67,6 +67,7 @@ fhvhv
 
 # project
 week_7_project/kafka/__pycache__
+week_7_project/kafka/src/__pycache__
 week_7_project/airflow/.env
 week_7_project/airflow/logs/*
 week_7_project/terraform/.terraform*
