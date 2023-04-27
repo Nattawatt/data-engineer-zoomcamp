@@ -1,4 +1,4 @@
-topic = 'express_sensor_unix'
+topic = 'express_sensor'
 
 config = {
      'bootstrap.servers': 'localhost:9092',     
@@ -36,3 +36,5 @@ express_schema = """
     }
 }
 """
+
+bucket = "test_express"

@@ -91,8 +91,6 @@ def generate_speed_reading(road_name, timestamp, prev_speed=None, prev_timestamp
     # Generate random car ID
     uid_car = ''.join(random.choices('0123456789ABCDEF', k=6))
 
-    timestamp_unix = int(timestamp.timestamp() * 1000)
-
     # Adjust speed based on time and day of the week to meet requirements
     if (day_of_week < 5 and ((7 <= hour_of_day < 10) or (18 <= hour_of_day < 21))) or \
         (day_of_week == 5 and 10 <= hour_of_day < 17):
@@ -104,7 +102,9 @@ def generate_speed_reading(road_name, timestamp, prev_speed=None, prev_timestamp
     else:
         speed = random.randint(80, 120)
 
-    return (timestamp_unix, uid_car, road_name, round(speed))
+    timestamp_milliseconds = int(timestamp.timestamp()*1000)
+
+    return (timestamp_milliseconds, uid_car, road_name, round(speed))
 
 
 if __name__ == "__main__":
@@ -118,15 +118,24 @@ if __name__ == "__main__":
                                      temp_to_dict)
     
     # genarate data
+    road_name = 'Si Rat Expressway'
     delta = datetime.timedelta(seconds=60)
     start_date = datetime.datetime(2021, 1, 1)
-    end_date = datetime.datetime(2023, 1, 1)
-    road_name = 'Si Rat Expressway'
+    end_date = datetime.datetime(2022, 1, 1)
 
+    # Generate list of datetime objects between start and end dates
     current_date = start_date
+    dates_list = []
+    while current_date < end_date:
+        dates_list.append(current_date)
+        current_date += delta
+
+    # Filter list to include only hours between 3AM and 11PM
+    filtered_dates = [d for d in dates_list if d.hour >= 3 and d.hour <= 23]
+
     prev_speed = None
     prev_timestamp = None
-    while current_date < end_date:
+    for current_date in filtered_dates:
         # Generate car data for current second
         traffic = random.uniform(0, 1)
         weather = random.choice([None, "rainy"])
