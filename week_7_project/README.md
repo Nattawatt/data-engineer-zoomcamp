@@ -1,84 +1,68 @@
-# RUN DOCKER-COMPOSE
+# Problem Description
+![Alt text](images/express_way.jpeg)
 
-```
-poetry install
-```
+The project aims to install sensors on an expressway to track the speed of cars every 60 seconds. The project solves two main problems:
 
-At `infra/`
+Problem 1: Emergency teams need to know the real-time location of the expressway's congested areas to take immediate action. The current approach of relying on driver reports or manually monitoring traffic conditions is not effective and can cause delays in emergency response times.
 
-```
-docker-compose up -d
-```
+Problem 2: The marketing team wants to create a campaign that offers discounts to customers who use the expressway during non-peak hours. However, without data on when the expressway is congested, it is challenging to identify the optimal times to offer these discounts.
 
-**check docker container up all**
-```bash
-docker container ls
-```
+By tracking the speed of cars every 60 seconds using the installed sensors, the project provides real-time information on the expressway's traffic conditions. This data can be used by the emergency teams to take immediate action, and the marketing team can identify the optimal times to offer discounts to customers. Thus, the project effectively addresses both the identified problems.
 
-# CREATE TOPICS
-```
-topics = express_sensor
-partition = 6
-```
-## UI ( OPTION 1 )
-visit http://localhost:9021/
+# Architecture
+![Alt text](images/Architecture.jpg)
 
-![Alt text](images/create-kafka-topics-ui.JPG)
+# initialize project
+requirement
+1.google cloud account
 
-# CREATE STREAMING
-```
-docker exec -it ksqldb-cli ksql http://ksqldb-server:8088
-```
+## step1 cloud
+[CLOUD]()
 
-```sql
-CREATE STREAM express_sensor(
-  timestamp BIGINT,
-  uid_car VARCHAR,
-  road_name VARCHAR,
-  speed BIGINT
-) WITH (
-  KAFKA_TOPIC='express_sensor',
-  VALUE_FORMAT='JSON_SR',
-  TIMESTAMP='timestamp'
-);
-```
+## step2 kafka
+[KAFKA]()
 
-```sql
-CREATE TABLE express_report_5_mins
-AS
-SELECT 
- road_name, 
- AVG(speed) AS AVG_SPEED_5_MIN
-FROM 
-express_sensor WINDOW TUMBLING (SIZE 5 MINUTE) 
-GROUP BY road_name;
-```
+## step3 airflow
+[AIRFLOW]()
 
-```sql
-SELECT
-    road_name, 
-    TIMESTAMPTOSTRING(WINDOWSTART,'yyyy-MM-dd HH:mm:ss') AS window_start,
-    TIMESTAMPTOSTRING(WINDOWEND,'yyyy-MM-dd HH:mm:ss') AS window_end,
-    AVG_SPEED_5_MIN,
-    CASE
-      WHEN AVG_SPEED_5_MIN > 100 THEN 'flow'
-      WHEN AVG_SPEED_5_MIN > 60 THEN 'normal'
-      ELSE 'jam' END AS TRAFFIC_STATUS
-FROM express_report_5_mins EMIT CHANGES;
-```
+## step4 dbt
+[DBT]()
 
-# RUN PRODUCER
-```bash
-poetry shell
-```
-
-at `./kafka`
-```bash
-python producer_police_locations.py
-```
+# run producer.py
 
 
-# REF
-ksql-getstart - ( https://ksqldb.io/quickstart.html )
+# peer-review-criteria
 
-ksql-python - ( https://github.com/bryanyang0528/ksql-python )
+* Problem description
+    * 0 points: Problem is not described
+    * 1 point: Problem is described but shortly or not clearly 
+    * 2 points: Problem is well described and it's clear what the problem the project solves
+* Cloud
+    * 0 points: Cloud is not used, things run only locally
+    * 2 points: The project is developed in the cloud
+    * 4 points: The project is developed in the cloud and IaC tools are used
+* Data ingestion (choose either batch or stream)
+    * Batch / Workflow orchestration
+        * 0 points: No workflow orchestration
+        * 2 points: Partial workflow orchestration: some steps are orchestrated, some run manually
+        * 4 points: End-to-end pipeline: multiple steps in the DAG, uploading data to data lake
+    * Stream
+        * 0 points: No streaming system (like Kafka, Pulsar, etc)
+        * 2 points: A simple pipeline with one consumer and one producer
+        * 4 points: Using consumer/producers and streaming technologies (like Kafka streaming, Spark streaming, Flink, etc)
+* Data warehouse
+    * 0 points: No DWH is used
+    * 2 points: Tables are created in DWH, but not optimized
+    * 4 points: Tables are partitioned and clustered in a way that makes sense for the upstream queries (with explanation)
+* Transformations (dbt, spark, etc)
+    * 0 points: No tranformations
+    * 2 points: Simple SQL transformation (no dbt or similar tools)
+    * 4 points: Tranformations are defined with dbt, Spark or similar technologies
+* Dashboard
+    * 0 points: No dashboard
+    * 2 points: A dashboard with 1 tile
+    * 4 points: A dashboard with 2 tiles
+* Reproducibility
+    * 0 points: No instructions how to run code at all
+    * 2 points: Some instructions are there, but they are not complete
+    * 4 points: Instructions are clear, it's easy to run the code, and the code works
