@@ -17,20 +17,21 @@ requirement
 1.google cloud account
 
 ## step1 cloud
-[CLOUD](https://github.com/Nattawatt/data-engineer-zoomcamp/tree/main/week_7_project/terraform/README.md)
+[CLOUD](https://github.com/Nattawatt/data-engineer-zoomcamp/tree/main/week_7_project/terraform)
 
 ## step2 kafka
-[KAFKA](https://github.com/Nattawatt/data-engineer-zoomcamp/tree/main/week_7_project/kafka/README.md)
+[KAFKA](https://github.com/Nattawatt/data-engineer-zoomcamp/tree/main/week_7_project/kafka)
 
 ## step3 airflow
-[AIRFLOW](https://github.com/Nattawatt/data-engineer-zoomcamp/blob/main/week_7_project/airflow/README.md)
+[AIRFLOW](https://github.com/Nattawatt/data-engineer-zoomcamp/blob/main/week_7_project/airflow)
 
 ## step4 dbt
-[DBT](https://github.com/Nattawatt/data-engineer-zoomcamp/tree/main/week_7_project/dbt/README.md)
-
-# run producer.py
+[DBT](https://github.com/Nattawatt/data-engineer-zoomcamp/tree/main/week_7_project/dbt)
 
 
+# STREAMING VIDEO
+<div style="position: relative; padding-bottom: 56.25%; height: 0;"><iframe src="https://www.loom.com/embed/49418fe8ca6c47af9f627baff0bf9e21" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe></div>
+-----
 # peer-review-criteria
 
 * Problem description
