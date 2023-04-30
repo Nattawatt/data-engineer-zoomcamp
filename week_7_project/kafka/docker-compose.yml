@@ -69,6 +69,72 @@ services:
       CONFLUENT_METRICS_ENABLE: 'true'
       CONFLUENT_SUPPORT_CUSTOMER_ID: 'anonymous'
 
+  kafka-connect:
+    image: confluentinc/cp-kafka-connect:7.3.0
+    hostname: kafka-connect
+    container_name: kafka-connect
+    depends_on:
+      - broker
+      - broker2
+      - schema-registry
+    ports:
+      - 8083:8083
+    environment:
+      CONNECT_CUB_KAFKA_TIMEOUT: 300
+      CONNECT_BOOTSTRAP_SERVERS: broker:29092,broker2:29093
+      CONNECT_REST_ADVERTISED_HOST_NAME: 'kafka-connect'
+      CONNECT_REST_PORT: 8083
+      CONNECT_GROUP_ID: kafka-connect
+      CONNECT_CONFIG_STORAGE_TOPIC: _kafka-connect-configs
+      CONNECT_OFFSET_STORAGE_TOPIC: _kafka-connect-offsets
+      CONNECT_STATUS_STORAGE_TOPIC: _kafka-connect-status
+      CONNECT_KEY_CONVERTER: org.apache.kafka.connect.storage.StringConverter
+      CONNECT_VALUE_CONVERTER: io.confluent.connect.avro.AvroConverter
+      CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL: 'http://schema-registry:8081'
+      CONNECT_INTERNAL_KEY_CONVERTER: 'org.apache.kafka.connect.json.JsonConverter'
+      CONNECT_INTERNAL_VALUE_CONVERTER: 'org.apache.kafka.connect.json.JsonConverter'
+      CONNECT_LOG4J_ROOT_LOGLEVEL: 'INFO'
+      CONNECT_LOG4J_LOGGERS: 'org.apache.kafka.connect.runtime.rest=WARN,org.reflections=ERROR'
+      CONNECT_LOG4J_APPENDER_STDOUT_LAYOUT_CONVERSIONPATTERN: "[%d] %p %X{connector.context}%m (%c:%L)%n"
+      CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR: '1'
+      CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: '1'
+      CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: '1'
+      CONNECT_PLUGIN_PATH: '/usr/share/java,/usr/share/confluent-hub-components/,/data/connect-jars'
+      # External secrets config
+      # See https://docs.confluent.io/current/connect/security.html#externalizing-secrets
+      CONNECT_CONFIG_PROVIDERS: 'file'
+      CONNECT_CONFIG_PROVIDERS_FILE_CLASS: 'org.apache.kafka.common.config.provider.FileConfigProvider'
+    volumes:
+      - ./kafka-connect/config/:/kafka-connect/config
+      - ~/.google/credentials/google_credentials.json:/opt/confluent/secrets/google_credentials.json
+    command: 
+      # In the command section, $ are replaced with $$ to avoid the error 'Invalid interpolation format for "command" option'
+      - bash 
+      - -c 
+      - |
+        echo "===> Installing connector plugins from Git"
+        wget -O /tmp/aiven-kafka-connect-gcs-0.9.0.tar https://github.com/aiven/gcs-connector-for-apache-kafka/releases/download/v0.9.0/aiven-kafka-connect-gcs-0.9.0.tar
+        tar -xvf /tmp/aiven-kafka-connect-gcs-0.9.0.tar --directory /usr/share/confluent-hub-components/
+        #
+        echo "===> Launching Kafka Connect worker"
+        /etc/confluent/docker/run & 
+        echo "===> Waiting for Kafka Connect to start listening on kafka-connect ⏳"
+        while [ $$(curl -s -o /dev/null -w %{http_code} http://kafka-connect:8083/connectors) -eq 000 ] ; do
+          echo -e $$(date) " Kafka Connect listener HTTP state: " $$(curl -s -o /dev/null -w %{http_code} http://kafka-connect:8083/connectors) " (waiting for 200)"
+          sleep 5
+        done
+        nc -vz kafka-connect 8083
+        #
+        sleep 5
+        echo -e "\n ===> Create topic"
+        cd /bin
+        ./kafka-topics --create --topic express_sensor --partitions 6 --bootstrap-server broker:29092,broker2:29093
+        sleep 5
+        echo -e "\n ===> Create connector sink"
+        cd /kafka-connect/config/sink/
+        curl -X POST -H "Content-Type: application/json" --data @connector_sink_express.config http://kafka-connect:8083/connectors
+        sleep infinity
+
   schema-registry:
     image: confluentinc/cp-schema-registry:7.3.0
     hostname: schema-registry
@@ -82,6 +148,7 @@ services:
       SCHEMA_REGISTRY_HOST_NAME: schema-registry
       SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: broker:29092,broker2:29093
       SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081
+    restart: unless-stopped
 
   control-center:
     image: confluentinc/cp-enterprise-control-center:7.3.0
@@ -90,13 +157,15 @@ services:
     depends_on:
       - broker
       - broker2
+      - kafka-connect
       - schema-registry
       - ksqldb-server
     ports:
       - "9021:9021"
     environment:
       CONTROL_CENTER_BOOTSTRAP_SERVERS: broker:29092,broker2:29093
-      CONTROL_CENTER_CONNECT_CONNECT-DEFAULT_CLUSTER: 'connect:8083'
+      CONTROL_CENTER_CONNECT_CONNECT-DEFAULT_CLUSTER: "http://kafka-connect:8083"
+      CONTROL_CENTER_CONNECT_HEALTHCHECK_ENDPOINT: '/connectors'
       CONTROL_CENTER_KSQL_KSQLDB1_URL: "http://ksqldb-server:8088"
       CONTROL_CENTER_KSQL_KSQLDB1_ADVERTISED_URL: "http://localhost:8088"
       CONTROL_CENTER_SCHEMA_REGISTRY_URL: "http://schema-registry:8081"
@@ -113,7 +182,7 @@ services:
     depends_on:
       - broker
       - broker2
-      # - connect
+      - kafka-connect
     ports:
       - "8088:8088"
     environment:
@@ -125,7 +194,7 @@ services:
       KSQL_KSQL_SCHEMA_REGISTRY_URL: "http://schema-registry:8081"
       KSQL_PRODUCER_INTERCEPTOR_CLASSES: "io.confluent.monitoring.clients.interceptor.MonitoringProducerInterceptor"
       KSQL_CONSUMER_INTERCEPTOR_CLASSES: "io.confluent.monitoring.clients.interceptor.MonitoringConsumerInterceptor"
-      KSQL_KSQL_CONNECT_URL: "http://connect:8083"
+      KSQL_KSQL_CONNECT_URL: "http://kafka-connect:8083"
       KSQL_KSQL_LOGGING_PROCESSING_TOPIC_REPLICATION_FACTOR: 1
       KSQL_KSQL_LOGGING_PROCESSING_TOPIC_AUTO_CREATE: 'true'
       KSQL_KSQL_LOGGING_PROCESSING_STREAM_AUTO_CREATE: 'true'
@@ -136,7 +205,7 @@ services:
     depends_on:
       - broker
       - broker2
-      # - connect
+      - kafka-connect
       - ksqldb-server
     entrypoint: /bin/sh
     tty: true

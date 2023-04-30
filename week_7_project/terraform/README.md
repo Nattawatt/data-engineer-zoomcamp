@@ -1,8 +1,11 @@
 # How to run terraform
-make sure you grant service account a permission to access gcp and save it to 
+make sure you grant service account a permission to access gcp and save it to
 some path and set env-var `GOOGLE_APPLICATION_CREDENTIALS` refer to that path
 
 ```bash
+export GOOGLE_APPLICATION_CREDENTIALS= "<path to your key>"
+
+# example for me
 export GOOGLE_APPLICATION_CREDENTIALS="/c/Users/Nattawat/.google/credentials/google_credentials.json"
 ```
 
@@ -21,12 +24,18 @@ terraform apply
 # How to remove service in gcp
 
 ```bash
+export GOOGLE_APPLICATION_CREDENTIALS= "<path to your key>"
+
+# example for me
 export GOOGLE_APPLICATION_CREDENTIALS="/c/Users/Nattawat/.google/credentials/google_credentials.json"
 ```
 
 ```bash
 terraform destroy
 ```
+# video
+
+https://www.loom.com/share/3e8ed0189e744131b3751e20c238534a
 
 # ref
 

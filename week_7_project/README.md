@@ -14,26 +14,77 @@ By tracking the speed of cars every 60 seconds using the installed sensors, the 
 
 # initialize project
 requirement
-1.google cloud account
+google cloud account
 
-## step1 cloud
-[CLOUD](https://github.com/Nattawatt/data-engineer-zoomcamp/tree/main/week_7_project/terraform)
+## STEP1 : Terraform
+[Terraform](https://github.com/Nattawatt/data-engineer-zoomcamp/tree/main/week_7_project/terraform)
 
-## step2 kafka
+## STEP2 : Kafka
 [KAFKA](https://github.com/Nattawatt/data-engineer-zoomcamp/tree/main/week_7_project/kafka)
 
-## step3 airflow
+## STEP3 : Airflow
 [AIRFLOW](https://github.com/Nattawatt/data-engineer-zoomcamp/blob/main/week_7_project/airflow)
 
-## step4 dbt
+## STEP4 : DBT
 [DBT](https://github.com/Nattawatt/data-engineer-zoomcamp/tree/main/week_7_project/dbt)
 
+# STREAMING 
 
-# STREAMING VIDEO
+![Alt text](images/streaming-demo.gif)
 
+## HOW TO RUN
 
-https://www.loom.com/embed/49418fe8ca6c47af9f627baff0bf9e21
+STEP 1 :  Docker exec to interact with ksqldb-cli.
+```bash
+docker exec -it ksqldb-cli ksql http://ksqldb-server:8088
+```
 
+STEP 2 : Create `express_sensor_stream` stream.
+
+```sql
+CREATE STREAM express_sensor_stream(
+  currenct_datetime TIMESTAMP,
+  uid_txn VARCHAR,
+  road_name VARCHAR,
+  speed BIGINT
+) WITH (
+  KAFKA_TOPIC='express_sensor',
+  VALUE_FORMAT='JSON_SR',
+  TIMESTAMP='currenct_datetime'
+);
+```
+STEP 3 : Create `express_report_5_mins` table.
+```sql
+CREATE TABLE express_report_5_mins
+AS
+SELECT 
+ road_name, 
+ AVG(speed) AS AVG_SPEED_5_MIN
+FROM 
+express_sensor_stream WINDOW TUMBLING (SIZE 5 MINUTE) 
+GROUP BY road_name;
+```
+
+STEP 3 : Watch table
+```sql
+SELECT
+    road_name,
+    WINDOWSTART,
+    WINDOWEND,
+    FROM_UNIXTIME(WINDOWSTART) AS window_start_utc_plus_7,
+    FROM_UNIXTIME(WINDOWEND) AS window_end_utc_plus_7,
+    AVG_SPEED_5_MIN,
+    CASE
+      WHEN AVG_SPEED_5_MIN > 100 THEN 'flow'
+      WHEN AVG_SPEED_5_MIN > 60 THEN 'normal'
+      ELSE 'jam' END AS TRAFFIC_STATUS
+FROM express_report_5_mins EMIT CHANGES;
+```
+## VIDEO
+
+https://www.loom.com/share/3077c4c5cffc4c8098e7981c5f8046a4
+
+# BATCH
 -----
 # peer-review-criteria
 

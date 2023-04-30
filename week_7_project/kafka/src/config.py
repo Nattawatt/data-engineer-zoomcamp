@@ -15,12 +15,12 @@ express_schema = """
     "description": "Report of a car on a road",
     "type": "object",
     "properties": {
-        "timestamp": {
-            "description": "Time of the report in Unix timestamp format",
+        "currenct_datetime": {
+            "description": "Time of the report in Unix timestamp utc+7 format",
             "type": "integer",
             "format": "int64"
         },
-        "uid_car": {
+        "uid_txn": {
             "description": "Unique identifier for the car",
             "type": "string"
         },

@@ -3,21 +3,21 @@ from confluent_kafka.serialization import SerializationContext, MessageField
 from confluent_kafka.schema_registry import SchemaRegistryClient
 from confluent_kafka.schema_registry.json_schema import JSONSerializer
 from config import config, sr_config, express_schema, topic
-import time
 import datetime
 import random
 import numpy as np
+import argparse
 
 class Car(object):
-    def __init__(self, timestamp, uid_car, road_name, speed):
-        self.timestamp = timestamp
-        self.uid_car = uid_car
+    def __init__(self, currenct_datetime, uid_txn, road_name, speed):
+        self.currenct_datetime = currenct_datetime
+        self.uid_txn = uid_txn
         self.road_name = road_name
         self.speed = speed
 
 def temp_to_dict(car,ctx):
-    return {"timestamp": car.timestamp,
-            "uid_car": car.uid_car,
+    return {"currenct_datetime": car.currenct_datetime,
+            "uid_txn": car.uid_txn,
             "road_name": car.road_name,
             "speed": car.speed}
 
@@ -89,7 +89,7 @@ def generate_speed_reading(road_name, timestamp, prev_speed=None, prev_timestamp
         speed *= random.uniform(0.2, 0.5)  # Decrease speed by random factor between 0.2 and 0.5
 
     # Generate random car ID
-    uid_car = ''.join(random.choices('0123456789ABCDEF', k=6))
+    uid_txn = ''.join(random.choices('0123456789ABCDEF', k=6))
 
     # Adjust speed based on time and day of the week to meet requirements
     if (day_of_week < 5 and ((7 <= hour_of_day < 10) or (18 <= hour_of_day < 21))) or \
@@ -102,12 +102,23 @@ def generate_speed_reading(road_name, timestamp, prev_speed=None, prev_timestamp
     else:
         speed = random.randint(80, 120)
 
-    timestamp_milliseconds = int(timestamp.timestamp()*1000)
+    # change it to utc+7
+    timestamp_milliseconds = int(timestamp.timestamp()*1000) + 25200000
 
-    return (timestamp_milliseconds, uid_car, road_name, round(speed))
+    return (timestamp_milliseconds, uid_txn, road_name, round(speed))
 
 
 if __name__ == "__main__":
+    # Create the parser
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--road_name', type=str, required=True)
+
+    # Parse the argument
+    args = parser.parse_args()
+    road_name = args.road_name
+
+    #################################################################################################
+
     # KAFKA CONFIG
     producer = Producer(config)
 
@@ -117,8 +128,9 @@ if __name__ == "__main__":
                                      schema_registry_client,
                                      temp_to_dict)
     
+    #################################################################################################
+
     # genarate data
-    road_name = 'Si Rat Expressway'
     delta = datetime.timedelta(seconds=60)
     start_date = datetime.datetime(2021, 1, 1)
     end_date = datetime.datetime(2022, 1, 1)
@@ -139,31 +151,30 @@ if __name__ == "__main__":
         # Generate car data for current second
         traffic = random.uniform(0, 1)
         weather = random.choice([None, "rainy"])
-        
-        speed_reading = generate_speed_reading(road_name, current_date, prev_speed, prev_timestamp, traffic)
+        generate = np.random.choice([True, False],p=[0.7,0.3])
+    
+        if generate:
+            speed_reading = generate_speed_reading(road_name, current_date, prev_speed, prev_timestamp, traffic)
 
-        # Print speed reading
-        print(speed_reading)
+            # Print speed reading
+            print(current_date,speed_reading)
 
-        # Update previous speed and timestamp
-        prev_speed = speed_reading[3]
-        prev_timestamp = current_date
+            # Update previous speed and timestamp
+            prev_speed = speed_reading[3]
 
+            # Create a new Car object with the above information and add it to the car_objects list
+            car_obj = Car(speed_reading[0], 
+                            speed_reading[1], 
+                            speed_reading[2],      
+                            speed_reading[3]
+                            )
+            
+            producer.produce(topic=topic, key=str(car_obj.road_name),
+                            value=json_serializer(car_obj, 
+                            SerializationContext(topic, MessageField.VALUE)),
+                            timestamp=car_obj.currenct_datetime,
+                            on_delivery=delivery_report)
+
+            producer.flush()
         # Increment current date
-        current_date += delta
-
-        # Create a new Police object with the above information and add it to the police_objects list
-        car_obj = Car(speed_reading[0], 
-                         speed_reading[1], 
-                         speed_reading[2],      
-                         speed_reading[3]
-                        )
-        
-        producer.produce(topic=topic, key=str(car_obj.road_name),
-                        value=json_serializer(car_obj, 
-                        SerializationContext(topic, MessageField.VALUE)),
-                        on_delivery=delivery_report)
-
-        producer.flush()
-
-        time.sleep(1)
+        prev_timestamp = current_date
