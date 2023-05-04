@@ -1,0 +1,9 @@
+version: 2
+
+sources:
+  - name: express_way
+    database: de-zoomcamp-376514
+    schema: express_way
+    tables: 
+      - name: express_raw
+
