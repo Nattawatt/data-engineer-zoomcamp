@@ -118,6 +118,9 @@ https://www.loom.com/share/ae9f3ae8b54f46a3be514c729e7e3c25
 
 # Dashboard
 
+![Alt text](images/dashboard.JPG)
+
+https://lookerstudio.google.com/reporting/db044a7e-8235-4500-b5ee-7921a9b5340e
 
 -----
 # peer-review-criteria
