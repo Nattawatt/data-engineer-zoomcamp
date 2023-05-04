@@ -3,18 +3,18 @@
 
 The project aims to install sensors on an expressway to track the speed of cars every 60 seconds. The project solves two main problems:
 
-Problem 1: Emergency teams need to know the real-time location of the expressway's congested areas to take immediate action. The current approach of relying on driver reports or manually monitoring traffic conditions is not effective and can cause delays in emergency response times.
+Problem 1: Emergency teams need to know the real-time information on traffic conditions in congested areas of expressways in order to respond promptly to emergencies. Current approaches that rely on driver reports or manual traffic monitoring are ineffective and may cause delays in emergency response.
 
 Problem 2: The marketing team wants to create a campaign that offers discounts to customers who use the expressway during non-peak hours. However, without data on when the expressway is congested, it is challenging to identify the optimal times to offer these discounts.
 
-By tracking the speed of cars every 60 seconds using the installed sensors, the project provides real-time information on the expressway's traffic conditions. This data can be used by the emergency teams to take immediate action, and the marketing team can identify the optimal times to offer discounts to customers. Thus, the project effectively addresses both the identified problems.
+The project tracks the speed of cars using installed sensors every 60 seconds to provide real-time information on expressway traffic conditions. If the average speed on the road is low, this indicates a traffic jam. This data can be used by emergency teams to respond promptly to emergencies and by the marketing team to identify optimal times to offer discounts to customers. Therefore, the project effectively addresses both identified problems.
 
 # Architecture
 ![Alt text](images/Architecture.jpg)
 
 # initialize project
-requirement
-google cloud account
+require
+- google cloud account
 
 ## STEP1 : Terraform
 [Terraform](https://github.com/Nattawatt/data-engineer-zoomcamp/tree/main/week_7_project/terraform)
@@ -85,7 +85,13 @@ FROM express_report_5_mins EMIT CHANGES;
 https://www.loom.com/share/3077c4c5cffc4c8098e7981c5f8046a4
 
 # BATCH
+I create pipeline for fullload from event data. 
 
+Actually, I'd desiged pipeline for incremental load but at kafka connector they provide prefix only datetime that processing in connector cluster. 
+
+It will have only prefix for today ex. yyyy=2022/mm=05/dd=31 not timestamp in an event.
+
+![Alt text](images/dags.JPG)
 ## VIDEO
 
 https://www.loom.com/share/47d78f5144724c1c927230c0fee20a60
@@ -111,6 +117,8 @@ For downstream usage
 
 # Transformations
 I use dbt for transformations from date transaction to avg per day and hours per road_name
+
+![Alt text](images/dbt_docs_chart.JPG)
 
 ## VIDEO
 
