@@ -85,6 +85,40 @@ FROM express_report_5_mins EMIT CHANGES;
 https://www.loom.com/share/3077c4c5cffc4c8098e7981c5f8046a4
 
 # BATCH
+
+## VIDEO
+
+https://www.loom.com/share/47d78f5144724c1c927230c0fee20a60
+
+# Data warehousing
+I create a partition and clustering table in Bigquery
+
+For downstream usage
+- It can query to point of time in DWH in optimise way.
+- For downstream query it need to aggregration for unit of analyst is raod_name.
+
+```python
+'clustering': {
+                "fields" : [
+                    "road_name"
+                    ]
+                },
+            'timePartitioning' : {
+                "type": "DAY",
+                "field": "currenct_datetime"
+                }
+```
+
+# Transformations
+I use dbt for transformations from date transaction to avg per day and hours per road_name
+
+## VIDEO
+
+https://www.loom.com/share/ae9f3ae8b54f46a3be514c729e7e3c25
+
+# Dashboard
+
+
 -----
 # peer-review-criteria
 
