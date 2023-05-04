@@ -1,17 +1,26 @@
 # How to start airflow
+```bash
+export PROJECT_ID=<YOUR_PROJECT_ID>
+export GCS_BUCKET_EXPRESS=<GCS_BUCKET_EXPRESS>
 ```
-echo -e "AIRFLOW_UID=$(id -u)" > .env
+
+```bash
+./setup.sh
 ```
 
 ```
-docker compose up airflow-init
+docker compose build airflow-init
 ```
 
 ```
-docker compose up
+docker compose up -d
 ```
 
-## Manage connection at **Airflow UI**
-You can manage connection here
+# START DAGS
 
-![Alt text](../images/airflor_connector.jpg)
+visit ( http://localhost:8080/home )
+
+![Alt text](../images/start_dags.JPG)
+
+# REF
+create-new-connection - ( https://cloud.google.com/composer/docs/how-to/managing/connections#creating_new_airflow_connections )
